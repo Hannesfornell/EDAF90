@@ -8,30 +8,22 @@ class ViewOrder extends Component {
         this.postOrder = this.postOrder.bind(this)
     }
 
-    newOrder(event){
+    newOrder(){
         this.setState({displayOrder: true, currentOrder: this.props.list})
         this.props.removeOrder()
     }
 
     postOrder(){
-        if(this.state.displayOrder){
-            return this.state.currentOrder.map((order) => {
-                return <div key={order.id}>
-                    <label>{order.foundation + ',' + order.protein + ',' + order.extra + ',' + order.dressing}</label>
-                </div>
-            })
-        }
+        return 
     }
     
     render(){
         return (
-        <div>
-            <button className="btn btn-primary" onClick={this.newOrder}>Create order</button>
-            { this.postOrder()
+                <div>
+                    <label>Order: {this.props.list.foundation + ',' + this.props.list.protein + ',' + this.props.list.extra + ',' + this.props.list.dressing}</label>
+                </div>
+                )
             }
-        </div>
-        )
-    }
 }
 
 export default ViewOrder

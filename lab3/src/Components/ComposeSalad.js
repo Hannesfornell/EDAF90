@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {withRouter} from 'react-router-dom'
 
 class ComposeSalad extends Component {
     constructor(props) {
@@ -44,6 +45,8 @@ class ComposeSalad extends Component {
     handleSubmit(event) {
       this.props.newSalad(this.state.foundation, this.state.protein, this.state.extra, this.state.dressing)
       this.setState({selectedFoundation:  '-- select an option -- ', selectedDressing:  '-- select an option --', foundation: '', protein: [], extra: [], dressing: ''})
+      //console.log(this.props.history);
+      this.props.history.push('/viewOrder')
       event.preventDefault()
     }
 
@@ -100,7 +103,7 @@ class ComposeSalad extends Component {
               </select>
             </div>
             <div className="form-group">
-              <button type="submit" className="btn btn-primary" value="Submit" >Create salad</button>
+              <button type="submit" className="btn btn-primary" value="Submit" >Order and submit</button>
             </div>
           </form>
         </div>
@@ -108,4 +111,4 @@ class ComposeSalad extends Component {
     }
   }
   
-  export default ComposeSalad;
+  export default withRouter(ComposeSalad);
