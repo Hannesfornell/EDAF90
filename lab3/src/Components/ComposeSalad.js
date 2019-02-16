@@ -14,6 +14,7 @@ class ComposeSalad extends Component {
 
     handleFoundationChange(event) {
       this.setState({selectedFoundation: event.target.value, foundation: event.target.value})
+      event.target.parentElement.classList.add("was-validated");
     }
 
     handleProteinChange(event) {
@@ -25,6 +26,7 @@ class ComposeSalad extends Component {
         newState.push(event.target.name)
       }
       this.setState({protein: newState})
+      event.target.parentElement.classList.add("was-validated");
     }
 
     handleExtraChange(event) {
@@ -36,17 +38,21 @@ class ComposeSalad extends Component {
         newState.push(event.target.name)
       }
       this.setState({extra: newState})
+      event.target.parentElement.classList.add("was-validated");
     }
 
     handleDressingChange(event) {
       this.setState({selectedDressing: event.target.value, dressing: event.target.value})
+      event.target.parentElement.classList.add("was-validated");
     }
 
     handleSubmit(event) {
+      if(event.target.checkValidity()){
       this.props.newSalad(this.state.foundation, this.state.protein, this.state.extra, this.state.dressing)
       this.setState({selectedFoundation:  '-- select an option -- ', selectedDressing:  '-- select an option --', foundation: '', protein: [], extra: [], dressing: ''})
-      //console.log(this.props.history);
       this.props.history.push('/viewOrder')
+      event.target.classList.add("was-validated");
+      }
       event.preventDefault()
     }
 
@@ -58,13 +64,14 @@ class ComposeSalad extends Component {
       let dressings = Object.keys(inventory).filter(name => inventory[name].dressing)
       return (
         <div className="container">
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={this.handleSubmit} noValidate>
             <div className="form-group">
               <label>Choose foundation</label>
-              <select className="form-control" value={this.state.selectedFoundation} onChange={this.handleFoundationChange}>
-                <option hidden> -- select an option -- </option>
+              <select className="form-control"  required value={this.state.selectedFoundation} onChange={this.handleFoundationChange}>
+                <option value='' disabled> -- select an option -- </option>
                 {foundations.map(name => <option key={name} value={name}>{name}</option>)}
               </select>
+              <div className="invalid-feedback">required, select one</div>
             </div>
 
             <div className="form-group">
@@ -97,10 +104,11 @@ class ComposeSalad extends Component {
             </div>
             <div className="form-group">
               <label>Choose dressing</label>
-              <select className="form-control" value={this.state.selectedDressing} onChange={this.handleDressingChange}>
-                <option hidden> -- select an option -- </option>
+              <select className="form-control"  required value={this.state.selectedDressing} onChange={this.handleDressingChange}>
+                <option disabled value=''> -- select an option -- </option>
                 {dressings.map(name => <option key={name} name={name}>{name}</option>)}
               </select>
+              <div className="invalid-feedback">required, select one</div>
             </div>
             <div className="form-group">
               <button type="submit" className="btn btn-primary" value="Submit" >Order and submit</button>
