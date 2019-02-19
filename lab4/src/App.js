@@ -9,45 +9,69 @@ class App extends Component {
   constructor(props){
     super(props)
     this.state = {salad:{}, inventory:{}}
-    
     this.createSalad = this.createSalad.bind(this)
     this.removeOrder = this.removeOrder.bind(this)
   }
-  // Ersätt data.foEach med att istället fetcha själva objekten från servern. Använd async och promise all
   componentWillMount() {
     fetch('http://localhost:8080/foundations/')
-      .then(response => {
-        return response.json()})
-      .then(data => {
-        let tempfoundation = {}
-        data.forEach((item => tempfoundation[item]={foundation: true}))
-        this.setState({inventory: {...this.state.inventory, ...tempfoundation} })
-      return});
+    .then(response => response.json())
+    .then(data => {
+      let requests = data.map(name => fetch(`http://localhost:8080/foundations/${name}`))
+      return Promise.all(requests).then(responses => {
+        Promise.all(responses.map(r => r.json())).then(details => {
+          let result= {}
+          data.forEach((d, i) => result[d]=details[i])
+          this.setState({inventory: {...this.state.inventory, ...result}})
+        })
+      })
+      }) 
       fetch('http://localhost:8080/proteins/')
       .then(response => response.json())
       .then(data => {
-        let tempprotein = {}
-        data.forEach((item => tempprotein[item]={protein: true}))
-        this.setState({inventory: {...this.state.inventory, ...tempprotein} })
-      return});
+        let requests = data.map(name => fetch(`http://localhost:8080/proteins/${name}`))
+        return Promise.all(requests).then(responses => {
+          Promise.all(responses.map(r => r.json())).then(details => {
+            let result= {}
+            data.forEach((d, i) => result[d]=details[i])
+            this.setState({inventory: {...this.state.inventory, ...result}})
+          })
+        })
+        })
       fetch('http://localhost:8080/extras/')
       .then(response => response.json())
       .then(data => {
-        let tempextra = {}
-        data.forEach((item => tempextra[item]={extra: true}))
-        this.setState({inventory: {...this.state.inventory, ...tempextra} })
-      return});
+        let requests = data.map(name => fetch(`http://localhost:8080/extras/${name}`))
+        return Promise.all(requests).then(responses => {
+          Promise.all(responses.map(r => r.json())).then(details => {
+            let result= {}
+            data.forEach((d, i) => result[d]=details[i])
+            this.setState({inventory: {...this.state.inventory, ...result}})
+          })
+        })
+        })
       fetch('http://localhost:8080/dressings/')
       .then(response => response.json())
       .then(data => {
-        let tempdressing = {}
-        data.forEach((item => tempdressing[item]={dressing: true}))
-        this.setState({inventory: {...this.state.inventory, ...tempdressing} })
-      return});
+        let requests = data.map(name => fetch(`http://localhost:8080/dressings/${name}`))
+        return Promise.all(requests).then(responses => {
+          Promise.all(responses.map(r => r.json())).then(details => {
+            let result= {}
+            data.forEach((d, i) => result[d]=details[i])
+            this.setState({inventory: {...this.state.inventory, ...result}})
+          })
+        })
+        })
+  }
+  componentDidMount(){
+    let oldSalad = JSON.parse(window.localStorage.getItem('Salad'))
+    if(oldSalad) {
+      this.setState({ salad: oldSalad})
+    }
   }
   createSalad(found, prot, extr, dress){
     let salad = {id:shortId.generate(), foundation: found, protein: prot, extra: extr, dressing: dress}
     this.setState({salad: salad })
+    window.localStorage.setItem('Salad',JSON.stringify(salad))
   }
 
   removeOrder(){
