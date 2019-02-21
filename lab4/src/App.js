@@ -10,7 +10,6 @@ class App extends Component {
     super(props)
     this.state = {salad:{}, inventory:{}}
     this.createSalad = this.createSalad.bind(this)
-    this.removeOrder = this.removeOrder.bind(this)
   }
   componentWillMount() {
     fetch('http://localhost:8080/foundations/')
@@ -32,7 +31,7 @@ class App extends Component {
         return Promise.all(requests).then(responses => {
           Promise.all(responses.map(r => r.json())).then(details => {
             let result= {}
-            data.forEach((d, i) => result[d]=details[i])
+            data.forEach((d, i) => {result[d]=details[i]})
             this.setState({inventory: {...this.state.inventory, ...result}})
           })
         })
@@ -65,21 +64,21 @@ class App extends Component {
   componentDidMount(){
     let oldSalad = JSON.parse(window.localStorage.getItem('Salad'))
     if(oldSalad) {
+      // oldSalad.price = () => en pris funktion
       this.setState({ salad: oldSalad})
     }
   }
   createSalad(found, prot, extr, dress){
     let salad = {id:shortId.generate(), foundation: found, protein: prot, extra: extr, dressing: dress}
+  
     this.setState({salad: salad })
     window.localStorage.setItem('Salad',JSON.stringify(salad))
   }
 
-  removeOrder(){
-    this.setState({list: []})
-  }
+
   render() {
     const composeSalad = (...params) => <ComposeSalad inventory={this.state.inventory} newSalad={this.createSalad}/>
-    const viewOrder= (...params) => <ViewOrder list={this.state.salad} removeOrder={this.removeOrder}/>
+    const viewOrder= (...params) => <ViewOrder list={this.state.salad} />
     return (
         <Router>
           <div>
